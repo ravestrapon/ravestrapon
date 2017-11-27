@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RAVE_STRAPON_LOCAL_DIR="."
-RAVE_STRAPON_SSH_KEY_DIR="~/.ssh/ravestrapon/"
+RAVE_STRAPON_SSH_KEY_DIR="${HOME}/.ssh/ravestrapon/"
 USERNAME="cmooney3_ravestrapon"
 SSH_SERVER="ssh.phx.nearlyfreespeech.net"
 RAVE_STRAPON_REMOTE_DIR="/home/public"
