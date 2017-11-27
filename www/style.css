@@ -1,0 +1,146 @@
+
+@font-face {
+  font-family: 'NeonGlow';
+  src: url('fonts/neonglow.ttf');
+}
+
+h1#title {
+  display: inline-block;
+  font-family: 'NeonGlow';
+  text-transform: uppercase;
+  font-size: 40pt;
+
+  background: red;
+  background: -webkit-repeating-linear-gradient(right, red, yellow 15%, red 30%);
+  background: -o-repeating-linear-gradient(right, red, yellow 20%, red 30%);
+  background: -moz-repeating-linear-gradient(right, red, yellow 20%, red 30%);
+  background: repeating-linear-gradient(right, red, yellow 20%, red 30%);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+p#your_source {
+  background: blue;
+  background: -webkit-repeating-linear-gradient(left top, #1de2c4, #fc58ee 5%, #1de2c4 10%);
+  background: -o-repeating-linear-gradient(left top, #1de2c4, #fc58ee 5%, #1de2c4 10%);
+  background: -moz-repeating-linear-gradient(left top, #1de2c4, #fc58ee 5%, #1de2c4 10%);
+  background: repeating-linear-gradient(left top, #1de2c4, #fc58ee 5%, #1de2c4 10%);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+p#join_us {
+  background: green;
+  background: -webkit-repeating-linear-gradient(right top, #5cf9ab, #ff7070 8%, #5cf9ab 16%);
+  background: -o-repeating-linear-gradient(left top, #1de2c4, #ff7070 5%, #1de2c4 10%);
+  background: -moz-repeating-linear-gradient(left top, #1de2c4, #ff7070 5%, #1de2c4 10%);
+  background: repeating-linear-gradient(left top, #1de2c4, #ff7070 5%, #1de2c4 10%);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+div#mc_embed_signup {
+  display: inline-block;
+  border-radius: 25px;
+  border: 2px solid #4fe825;
+  padding-left: 30px; 
+  padding-right: 30px; 
+}
+
+img.left_background {
+position: absolute;
+top: 0px;
+left: 0px;
+height: 600px;
+z-index:-1;
+padding:20px;
+}
+
+img.right_background {
+position: absolute;
+top: 0px;
+right: 0px;
+height: 600px;
+z-index:-1;
+padding:20px;
+}
+
+a {
+  color: #364fa8;
+}
+
+body {
+  color: #4ca7e0;
+  text-align: center;
+  background-color: black;
+}
+
+p#your_source {
+  background: blue;
+  background: -webkit-repeating-linear-gradient(left top, #1de2c4, #fc58ee 5%, #1de2c4 10%);
+  background: -o-repeating-linear-gradient(left top, #1de2c4, #fc58ee 5%, #1de2c4 10%);
+  background: -moz-repeating-linear-gradient(left top, #1de2c4, #fc58ee 5%, #1de2c4 10%);
+  background: repeating-linear-gradient(left top, #1de2c4, #fc58ee 5%, #1de2c4 10%);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+p#join_us {
+  background: green;
+  background: -webkit-repeating-linear-gradient(right top, #5cf9ab, #ff7070 8%, #5cf9ab 16%);
+  background: -o-repeating-linear-gradient(left top, #1de2c4, #ff7070 5%, #1de2c4 10%);
+  background: -moz-repeating-linear-gradient(left top, #1de2c4, #ff7070 5%, #1de2c4 10%);
+  background: repeating-linear-gradient(left top, #1de2c4, #ff7070 5%, #1de2c4 10%);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+div#mc_embed_signup {
+  display: inline-block;
+  border-radius: 25px;
+  border: 2px solid #4fe825;
+  padding-left: 30px; 
+  padding-right: 30px; 
+}
+
+img.left_background {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 600px;
+  z-index:-1;
+  padding:20px;
+}
+
+img.right_background {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  height: 600px;
+  z-index:-1;
+  padding:20px;
+}
+
+a {
+  color: #364fa8;
+}
+
+body {
+  color: #4ca7e0;
+  text-align: center;
+  background-color: black;
+}
+
+iframe#video {
+  padding: 2px;
+  background: orange;
+  background: -webkit-repeating-linear-gradient(right top, red, orange, yellow, green, blue, indigo, violet, red);
+  background: -o-repeating-linear-gradient(right top, red, orange, yellow, green, blue, indigo, violet, red);
+  background: -moz-repeating-linear-gradient(right top, red, orange, yellow, green, blue, indigo, violet, red);
+  background: repeating-linear-gradient(right top, red, orange, yellow, green, blue, indigo, violet, red);
+}
