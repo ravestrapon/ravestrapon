@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="8.4.2">
+<eagle version="8.4.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -1597,19 +1597,19 @@ Source: http://www.osram.convergy.de/</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="cmooney">
+<library name="ravestrapon">
 <packages>
 <package name="FCI-10118192-0001LF">
-<smd name="GND@3" x="-3.8" y="0" dx="1.8" dy="1.9" layer="1"/>
-<smd name="GND@5" x="1.15" y="0" dx="1.8" dy="1.9" layer="1"/>
-<smd name="GND@4" x="-1.15" y="0" dx="1.8" dy="1.9" layer="1"/>
-<smd name="GND@6" x="3.8" y="0" dx="1.8" dy="1.9" layer="1"/>
-<smd name="GND@2" x="-3.1" y="2.55" dx="2.1" dy="1.6" layer="1"/>
-<smd name="GND@7" x="3.1" y="2.55" dx="2.1" dy="1.6" layer="1"/>
-<smd name="GND@1" x="1.35" y="2.675" dx="0.4" dy="1.35" layer="1"/>
+<smd name="NC@2" x="-3.8" y="0" dx="1.8" dy="1.9" layer="1"/>
+<smd name="NC@4" x="1.15" y="0" dx="1.8" dy="1.9" layer="1"/>
+<smd name="NC@1" x="-1.15" y="0" dx="1.8" dy="1.9" layer="1"/>
+<smd name="NC@5" x="3.8" y="0" dx="1.8" dy="1.9" layer="1"/>
+<smd name="NC@3" x="-3.1" y="2.55" dx="2.1" dy="1.6" layer="1"/>
+<smd name="NC@6" x="3.1" y="2.55" dx="2.1" dy="1.6" layer="1"/>
+<smd name="GND" x="1.35" y="2.675" dx="0.4" dy="1.35" layer="1"/>
 <smd name="RX" x="-0.65" y="2.675" dx="0.4" dy="1.35" layer="1"/>
 <smd name="TX" x="0" y="2.675" dx="0.4" dy="1.35" layer="1"/>
-<smd name="NC" x="0.65" y="2.675" dx="0.4" dy="1.35" layer="1"/>
+<smd name="NC@0" x="0.65" y="2.675" dx="0.4" dy="1.35" layer="1"/>
 <smd name="VCC" x="-1.3" y="2.675" dx="0.4" dy="1.35" layer="1"/>
 <wire x1="-3.75" y1="-1.45" x2="3.75" y2="-1.45" width="0.127" layer="51"/>
 <wire x1="-3.75" y1="3.35" x2="-3.75" y2="-1.75" width="0.127" layer="51"/>
@@ -1664,8 +1664,8 @@ Source: http://www.osram.convergy.de/</description>
 <connects>
 <connect gate="G$1" pin="D+" pad="RX"/>
 <connect gate="G$1" pin="D-" pad="TX"/>
-<connect gate="G$1" pin="GND" pad="GND@1 GND@2 GND@3 GND@4 GND@5 GND@6 GND@7" route="any"/>
-<connect gate="G$1" pin="ID" pad="NC"/>
+<connect gate="G$1" pin="GND" pad="GND"/>
+<connect gate="G$1" pin="ID" pad="NC@0"/>
 <connect gate="G$1" pin="VBUS" pad="VCC"/>
 </connects>
 <technologies>
@@ -5667,9 +5667,9 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <parts>
 <part name="LIPO_CHARGING_IC" library="maxim" library_urn="urn:adsk.eagle:library:269" deviceset="MAX1555" device="" package3d_urn="urn:adsk.eagle:package:17526/1"/>
 <part name="LIPO_BATTERY" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="JST_2PIN" device="-SMT-RA"/>
-<part name="USB_JACK" library="cmooney" deviceset="FCI-10118192-0001LF" device=""/>
-<part name="LED_R" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/1"/>
 <part name="CHG_LEG" library="adafruit" library_urn="urn:adsk.eagle:library:420" deviceset="LED" device="3MM"/>
+<part name="USB_JACK" library="ravestrapon" deviceset="FCI-10118192-0001LF" device=""/>
+<part name="LED_R" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-US_" device="0207/2V" package3d_urn="urn:adsk.eagle:package:23490/1"/>
 </parts>
 <sheets>
 <sheet>
@@ -5677,10 +5677,10 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 </plain>
 <instances>
 <instance part="LIPO_CHARGING_IC" gate="G$1" x="50.8" y="35.56"/>
-<instance part="LIPO_BATTERY" gate="G$1" x="96.52" y="35.56"/>
+<instance part="LIPO_BATTERY" gate="G$1" x="96.52" y="35.56" rot="MR180"/>
+<instance part="CHG_LEG" gate="G$1" x="76.2" y="12.7" rot="R90"/>
 <instance part="USB_JACK" gate="G$1" x="53.34" y="63.5"/>
 <instance part="LED_R" gate="G$1" x="60.96" y="12.7"/>
-<instance part="CHG_LEG" gate="G$1" x="76.2" y="12.7" rot="R90"/>
 </instances>
 <busses>
 </busses>
@@ -5689,18 +5689,20 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <segment>
 <pinref part="LIPO_CHARGING_IC" gate="G$1" pin="BAT"/>
 <wire x1="60.96" y1="40.64" x2="86.36" y2="40.64" width="0.1524" layer="91"/>
-<pinref part="LIPO_BATTERY" gate="G$1" pin="1"/>
-<wire x1="86.36" y1="40.64" x2="93.98" y2="38.1" width="0.1524" layer="91"/>
 <label x="71.12" y="40.64" size="1.778" layer="95"/>
+<pinref part="LIPO_BATTERY" gate="G$1" pin="2"/>
+<wire x1="93.98" y1="35.56" x2="86.36" y2="35.56" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="35.56" x2="86.36" y2="40.64" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$2" class="0">
+<net name="GND" class="0">
 <segment>
 <pinref part="LIPO_CHARGING_IC" gate="G$1" pin="GND"/>
 <wire x1="60.96" y1="30.48" x2="86.36" y2="30.48" width="0.1524" layer="91"/>
-<pinref part="LIPO_BATTERY" gate="G$1" pin="2"/>
-<wire x1="86.36" y1="30.48" x2="93.98" y2="35.56" width="0.1524" layer="91"/>
 <label x="71.12" y="30.48" size="1.778" layer="95"/>
+<pinref part="LIPO_BATTERY" gate="G$1" pin="1"/>
+<wire x1="86.36" y1="30.48" x2="86.36" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="33.02" x2="93.98" y2="33.02" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="LIPO_CHARGING_IC" gate="G$1" pin="DC"/>
@@ -5708,33 +5710,33 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <label x="33.02" y="38.1" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="USB_JACK" gate="G$1" pin="GND"/>
 <wire x1="63.5" y1="58.42" x2="71.12" y2="58.42" width="0.1524" layer="91"/>
 <label x="66.04" y="58.42" size="1.778" layer="95"/>
-</segment>
-<segment>
-<pinref part="CHG_LEG" gate="G$1" pin="C"/>
-<wire x1="81.28" y1="12.7" x2="93.98" y2="12.7" width="0.1524" layer="91"/>
-<label x="88.9" y="12.7" size="1.778" layer="95"/>
+<pinref part="USB_JACK" gate="G$1" pin="GND"/>
 </segment>
 </net>
 <net name="USB_POWER" class="0">
 <segment>
-<pinref part="USB_JACK" gate="G$1" pin="VBUS"/>
 <wire x1="63.5" y1="68.58" x2="71.12" y2="68.58" width="0.1524" layer="91"/>
 <label x="66.04" y="68.58" size="1.778" layer="95"/>
+<pinref part="USB_JACK" gate="G$1" pin="VBUS"/>
 </segment>
 <segment>
 <pinref part="LIPO_CHARGING_IC" gate="G$1" pin="USB"/>
 <wire x1="40.64" y1="33.02" x2="33.02" y2="33.02" width="0.1524" layer="91"/>
 <label x="22.86" y="33.02" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="CHG_LEG" gate="G$1" pin="C"/>
+<wire x1="81.28" y1="12.7" x2="91.44" y2="12.7" width="0.1524" layer="91"/>
+<label x="86.36" y="12.7" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="N$1" class="0">
 <segment>
-<pinref part="LED_R" gate="G$1" pin="2"/>
 <pinref part="CHG_LEG" gate="G$1" pin="A"/>
 <wire x1="73.66" y1="12.7" x2="66.04" y2="12.7" width="0.1524" layer="91"/>
+<pinref part="LED_R" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="CHG_INDICATOR" class="0">
@@ -5744,9 +5746,9 @@ Source: http://www.murata.com .. GRM43DR72E224KW01.pdf</description>
 <label x="63.5" y="35.56" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="LED_R" gate="G$1" pin="1"/>
 <wire x1="55.88" y1="12.7" x2="43.18" y2="12.7" width="0.1524" layer="91"/>
 <label x="33.02" y="12.7" size="1.778" layer="95"/>
+<pinref part="LED_R" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>
