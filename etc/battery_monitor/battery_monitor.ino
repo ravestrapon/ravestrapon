@@ -7,7 +7,7 @@
 #define ADC_STEPS 1024.0
 #define VCC 2.56 
 
-#define DELAY_MS 100
+#define DELAY_MS 500
 
 void setup() {
   // Use the internal 1.1V reference instead of Vcc for the
@@ -29,8 +29,7 @@ void loop() {
   Serial.print(GetVoltage(MON_PIN_0, MON_PIN_0_SCALER));
   Serial.print("V\t");
   Serial.print(GetVoltage(MON_PIN_3, MON_PIN_3_SCALER));
-  Serial.print("V\t");
-  Serial.print("\n");
+  Serial.print("V\n");
 
   delay(DELAY_MS);
 }
