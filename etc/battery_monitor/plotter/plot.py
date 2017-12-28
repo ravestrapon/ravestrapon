@@ -64,6 +64,7 @@ def Plot(log_filename, plot_filename="plot.png"):
   plt.grid()
 
   plt.savefig(plot_filename)
+  plt.close()
 
 if __name__ == "__main__":
   if len(sys.argv) < 2:

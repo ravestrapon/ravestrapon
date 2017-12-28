@@ -1,7 +1,7 @@
 #include<avr/io.h>
 #include <util/delay.h>
 
-#define DELAY_MS 1000
+#define DELAY_MS 100
  
 int main()
 {

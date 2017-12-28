@@ -1,0 +1,3 @@
+[submodule "src/FastLED"]
+	path = src/FastLED
+	url = https://github.com/FastLED/FastLED.git
