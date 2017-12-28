@@ -7,7 +7,7 @@
 #define ADC_STEPS 1024.0
 #define VCC 2.56 
 
-#define DELAY_MS 500
+#define DELAY_MS 200
 
 void setup() {
   // Use the internal 1.1V reference instead of Vcc for the
