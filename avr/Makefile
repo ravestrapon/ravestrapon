@@ -23,7 +23,7 @@ flash:	all
 	$(AVRDUDE) -U flash:w:main.hex:i
 
 fuse:
-	$(AVRDUDE) $(FUSES)
+	$(AVRDUDE) $(FqUSES)
 
 install: flash fuse
 
@@ -37,6 +37,3 @@ main.elf: $(OBJECTS)
 main.hex: main.elf
 	rm -f main.hex
 	avr-objcopy -j .text -j .data -O ihex main.elf main.hex
-
-cpp:
-	$(COMPILE) -E main.c

@@ -1,1 +1,4 @@
 *.swp
+*.pyc
+*.log
+etc/battery_monitor/plotter/plot.png
