@@ -16,7 +16,7 @@
 #define MAX_BRIGHTNESS 255
 #define BUTTON_PIN 11 
 
-#define LED_PIN 2 
+#define LED_PIN 0
 #define NUM_POLE_LEDS (24)
 #define NUM_BALL_LEDS (0)
 #define NUM_LEDS (NUM_POLE_LEDS + NUM_BALL_LEDS)
