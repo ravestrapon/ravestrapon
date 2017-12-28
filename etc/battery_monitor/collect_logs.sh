@@ -3,4 +3,4 @@ BAUD_RATE=9600
 
 stty -F ${PORT} ${BAUD_RATE} raw -clocal -echo icrnl
 
-cat < ${PORT} | perl -MTime::HiRes=time -ne 'printf "%.3f\t%s", time(), $_'
+perl -MTime::HiRes=time -ne '$|=1; printf "%.3f\t%s", time(), $_' < ${PORT}
