@@ -61,6 +61,4 @@ void loop() {
  for (int i = 0; i < num_animations; i++) {
    (*animations[i])(leds, NUM_LEDS);
  }
- FastLED.show();
- FastLED.delay(1000);
 }
