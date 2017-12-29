@@ -53,7 +53,7 @@ LFUSE="0xFF"
 HFUSE="0x89"
 VERIFY_FUSES="${AVRDUDE} -U lfuse:v:${LFUSE}:m -U hfuse:v:${HFUSE}:m -qq"
 WRITE_FUSES="${AVRDUDE} -U lfuse:w:${LFUSE}:m -U hfuse:w:${HFUSE}:m -qq"
-HEX_FILE="${BUILD_PATH}/${INO}.with_bootloader.hex"
+HEX_FILE="${BUILD_PATH}/${INO}.hex"
 
 echo -e "${CYAN}++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++${NC}"
 echo -e "${CYAN}FUSES: Making sure the fuses are L:${LFUSE} and H:${HFUSE}...${NC}"

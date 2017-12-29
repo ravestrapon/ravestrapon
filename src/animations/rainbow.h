@@ -17,7 +17,7 @@ constexpr int kMaxFrames = 1000;
 
 constexpr int kFrameDelayMS = 2;
 
-void RainbowAnimation(CRGB *leds, int num_pole_leds, int num_ball_leds) {
+void RainbowAnimation(CRGB *leds, int num_leds) {
   int start_hue = random(255);
   // This value sets how much the hue steps ahead for each pixel, effectively
   // controlling how wide the rainbow pattern is.
@@ -28,11 +28,8 @@ void RainbowAnimation(CRGB *leds, int num_pole_leds, int num_ball_leds) {
   int num_frames = random(kMinFrames, kMaxFrames);
 
   for (int i = 0; i < num_frames; i++) {
-    fill_rainbow(leds, num_pole_leds,
+    fill_rainbow(leds, num_leds,
                  (start_hue + i * frame_hue_step) % 255, hue_step);
-
-    setBallColor(leds + num_pole_leds, num_ball_leds, leds[num_pole_leds / 2]);
-
     FastLED.show();
     FastLED.delay(kFrameDelayMS);
   }
