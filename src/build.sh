@@ -7,6 +7,18 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 
+
+num_args=$#
+should_flash=0
+if [ ${num_args} -gt 0 ]; then
+  if [ "$1" == "--flash" -o "$1" == "-f" ]; then
+    should_flash=1
+  else
+    echo -e "${RED}ERROR: Invalid argument '$1'.${NC}"
+    exit 1
+  fi
+fi
+
 # First use the Arduino compile to generate a .hex file by "verifying" the
 # .ino file and specifying a custom build directory
 BOARD="MightyCore:avr:16:pinout=standard,clock=16MHz_external"
@@ -26,6 +38,12 @@ else
   echo -e "${GREEN}SUCCESS: Compilation completed without errors.${NC}"
   echo
 fi
+
+if [ ${should_flash} -ne 1 ]; then
+  echo -e "${CYAN}(If you want to flash the MCU, rerun with the '-f' or '--flash' option.)${NC}"
+  exit 0
+fi
+
 
 # Now that's it's compiled, we start the process of actually flashing the
 # program onto our MCU.  In the Arduino build directory there is a .hex file that
