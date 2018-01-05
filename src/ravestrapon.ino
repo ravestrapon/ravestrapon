@@ -18,7 +18,7 @@
 #define UNUSED_ANALOG_INPUT 1
 #define POWER_ON_DELAY_MS 1000
 
-#define BOUNCE_TIME_MS 100
+#define BOUNCE_TIME_MS 200
 #define BRIGHTNESS_BTN_PIN 10
 #define FUEL_GAUGE_BTN_PIN 11
 #define FUEL_GAUGE_ADC_PIN 4
@@ -56,7 +56,7 @@ ISR(INT0_vect) {
 }
 
 static unsigned long last_fuel_gauge_press_time = 0;
-bool should_read_fuel_gauge = true;
+bool should_read_fuel_gauge = false;
 ISR(INT1_vect) {
   // Handing a button press of the fuel gauge status button.
   unsigned long now = millis();
@@ -123,12 +123,9 @@ void loop() {
 
     // Do the fuel gauge check
     if (should_read_fuel_gauge) {
-      digitalWrite(STATUS_LED1_PIN, HIGH);
       digitalWrite(STATUS_LED2_PIN, HIGH);
       displayFuelGauge(FUEL_GAUGE_ADC_PIN, leds, NUM_LEDS);
-      digitalWrite(STATUS_LED1_PIN, LOW);
       digitalWrite(STATUS_LED2_PIN, LOW);
-
       should_read_fuel_gauge = false;
     }
   }
