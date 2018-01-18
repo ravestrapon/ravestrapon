@@ -10,6 +10,7 @@
 #include "animations/centerfill.h"
 #include "animations/fill.h"
 #include "animations/pulse.h"
+#include "animations/rainbow.h"
 #include "animations/static.h"
 #include "animations/stripes.h"
 
@@ -114,8 +115,8 @@ void setup() {
 // by building up an enum full of their names and a generator function
 // that returns a generic Animation* give the type of animation.
 // When adding a new animation, this is where you do the book-keeping.
-enum AnimationType {PULSE, BLOCKIFY, STATIC, FILL, CENTERFILL, STRIPES,
-                    NUM_ANIMATIONS};
+enum AnimationType {RAINBOW, PULSE, BLOCKIFY, STATIC, FILL, CENTERFILL,
+                    STRIPES, NUM_ANIMATIONS};
 Animation* buildNewAnimation(AnimationType type);
 Animation* buildNewAnimation(AnimationType type) {
   switch (type) {
@@ -131,6 +132,8 @@ Animation* buildNewAnimation(AnimationType type) {
       return new Blockify::BlockifyAnimation(leds, NUM_LEDS);
     case AnimationType::PULSE:
       return new Pulse::PulseAnimation(leds, NUM_LEDS);
+    case AnimationType::RAINBOW:
+      return new Rainbow::RainbowAnimation(leds, NUM_LEDS);
     default:
       return NULL;
   }

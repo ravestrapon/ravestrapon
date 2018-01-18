@@ -13,7 +13,7 @@ class PulseAnimation : public Animation {
     PulseAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
       fillRandomContrastingColors(c1_, c2_);
       speed_ = random(kMinSpeed, kMaxSpeed);
-      angle_ = random(0, 255);
+      angle_ = random(360);
     }
 
   
