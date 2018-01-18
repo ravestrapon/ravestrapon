@@ -26,6 +26,8 @@
 #define STATUS_LED1_PIN 12
 #define STATUS_LED2_PIN 13
 
+#define USB_POWER_DETECTION_PIN 9
+
 #define LED_PIN 0
 #define NUM_LEDS 24
 #define CHIPSET     WS2811
@@ -63,6 +65,10 @@ ISR(INT1_vect) {
   if (now - last_fuel_gauge_press_time > BOUNCE_TIME_MS &&
      !digitalRead(FUEL_GAUGE_BTN_PIN)) {
     should_read_fuel_gauge = true;
+
+    // Temp -- update the usb power status on the LED when this button is pressed
+    bool is_usb_connected = digitalRead(USB_POWER_DETECTION_PIN);
+    digitalWrite(STATUS_LED2_PIN, is_usb_connected);
   }
   last_fuel_gauge_press_time = now;
 }
@@ -89,6 +95,9 @@ void setup() {
 
   // Setting up the ADC for the fuel gauge
   analogReference(INTERNAL);
+
+  // Configure the USB power detection pin as a digital input
+  pinMode(USB_POWER_DETECTION_PIN, INPUT);
 
   // The board has two pins attached to an LED for displaying status/debugging
   pinMode(STATUS_LED1_PIN, OUTPUT);
@@ -122,11 +131,12 @@ void loop() {
     (*animations[i])(leds, NUM_LEDS);
 
     // Do the fuel gauge check
-    if (should_read_fuel_gauge) {
-      digitalWrite(STATUS_LED2_PIN, HIGH);
-      displayFuelGauge(FUEL_GAUGE_ADC_PIN, leds, NUM_LEDS);
-      digitalWrite(STATUS_LED2_PIN, LOW);
-      should_read_fuel_gauge = false;
-    }
+    //if (should_read_fuel_gauge) {
+    //  digitalWrite(STATUS_LED2_PIN, HIGH);
+    //  displayFuelGauge(FUEL_GAUGE_ADC_PIN, leds, NUM_LEDS);
+    //  digitalWrite(STATUS_LED2_PIN, LOW);
+    //  should_read_fuel_gauge = false;
+    //}
+
   }
 }
