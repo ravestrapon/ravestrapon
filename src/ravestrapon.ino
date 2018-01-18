@@ -6,14 +6,9 @@
 
 #include "addons/fuelgauge.h"
 
-#include "animations/blockify.h"
-#include "animations/drop.h"
-#include "animations/fill.h"
-#include "animations/pulse.h"
-#include "animations/rainbow.h"
-#include "animations/static.h"
 #include "animations/stripes.h"
-#include "animations/tracer.h"
+#include "animations/fill.h"
+#include "animations/centerfill.h"
 
 #define UNUSED_ANALOG_INPUT 1
 #define POWER_ON_DELAY_MS 1000
@@ -111,32 +106,35 @@ void setup() {
   FastLED.setBrightness(brightnesses[brightness]);
 }
 
-typedef void (*Animation)(CRGB*, int);
-Animation animations[] = {
-  &Stripes::StripesAnimation,
-  &Blockify::BlockifyAnimation,
-  &Rainbow::RainbowAnimation,
-  &Fill::FillAnimation,
-  &Static::StaticAnimation,
-  &Fill::CenterFillAnimation,
-  &Pulse::PulseAnimation,
-  &Tracer::TracerAnimation,
-  &Drop::DropAnimation,
-};
-int num_animations = sizeof(animations) / sizeof(animations[0]);
 
-void loop() {
-  for (int i = 0; i < num_animations; i++) {
-    // Run the animation
-    (*animations[i])(leds, NUM_LEDS);
-
-    // Do the fuel gauge check
-    //if (should_read_fuel_gauge) {
-    //  digitalWrite(STATUS_LED2_PIN, HIGH);
-    //  displayFuelGauge(FUEL_GAUGE_ADC_PIN, leds, NUM_LEDS);
-    //  digitalWrite(STATUS_LED2_PIN, LOW);
-    //  should_read_fuel_gauge = false;
-    //}
-
+Animation* buildNewAnimation(int type) {
+  if (type == 0) {
+    return new Fill::FillAnimation(leds, NUM_LEDS);
+  } else if (type == 1) {
+    return new CenterFill::CenterFillAnimation(leds, NUM_LEDS);
+  } else {
+    return new Stripes::StripesAnimation(leds, NUM_LEDS);
   }
 }
+
+void loop() {
+  Animation* anim;
+
+  for (int animation_type = 0; animation_type < 3; animation_type++) {
+    anim = buildNewAnimation(animation_type);
+    for (int i = 0; i < 100; i++) {
+      anim->nextFrame();
+      FastLED.show();
+      FastLED.delay(50);
+    }
+  }
+}
+
+
+// Do the fuel gauge check
+//if (should_read_fuel_gauge) {
+//  digitalWrite(STATUS_LED2_PIN, HIGH);
+//  displayFuelGauge(FUEL_GAUGE_ADC_PIN, leds, NUM_LEDS);
+//  digitalWrite(STATUS_LED2_PIN, LOW);
+//  should_read_fuel_gauge = false;
+//}

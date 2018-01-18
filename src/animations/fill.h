@@ -1,106 +1,41 @@
 #ifndef FILL_H
 #define FILL_H
 
-#include <FastLED.h>
-#include "util.h"
+#include "animation.h"
 
 namespace Fill {
 
-constexpr int kMinFills = 3;
-constexpr int kMaxFills = 7;
-constexpr int kMinFrameDelayMS = 20;
-constexpr int kMaxFrameDelayMS = 30;
+constexpr int kMinSpeed = 2;
+constexpr int kMaxSpeed = 8;
 
-void FillAnimation_Aux(CRGB *leds, int num_leds,
-                       int segment_size, CRGB c1, CRGB c2, int frame_delay_ms) {
-  int i;
-  for (i = 0; i < num_leds; i++) {
-    leds[i] = c1;
-  }
+class FillAnimation : public Animation {
+  public:
+    FillAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
+      fillRandomContrastingColors(c1_, c2_);
+      int direction = randomDirection();
+      frame_ = (direction == -1) ? 0 : num_leds;
+    };
 
-  for (i = 0; i < num_leds; i++) {
-    leds[i] = c2;
-    if (i % segment_size == 0 || i == num_leds - 1) {
-      FastLED.show();
-      FastLED.delay(frame_delay_ms);
-    }
-  }
+    void nextFrame() {
+      // Using modulo division determine how many are "filled"
+      int fill_level = frame_ % (1 + num_leds_ * 2); 
+      if (fill_level > num_leds_) {
+        fill_level = num_leds_ - (fill_level - num_leds_);
+      }
 
-  for (i = num_leds; i >= 0; i--) {
-    leds[i] = c1;
-    if (i % segment_size == 0 || i == num_leds - 1) {
-      FastLED.show();
-      FastLED.delay(frame_delay_ms);
-    }
-  }
-}
+      // Perform the fill
+      for (int i = 0; i < num_leds_; i++) {
+        leds_[i] = (i < fill_level) ? c1_ : c2_;
+      }
 
-void CenterFillAnimation_Aux(CRGB *leds, int num_leds,
-                             int segment_size, CRGB c1, CRGB c2, int frame_delay_ms) {
-  int i, j;
-  int center = num_leds / 2;
+      frame_++;
+    };
 
-  for (i = 0; i < center; i += segment_size) {
-    for (j = 0; j < num_leds; j++) {
-      leds[j] = (abs(center - j) <= i) ? c1 : c2;
-    }
-    FastLED.show();
-    FastLED.delay(frame_delay_ms);
-  }
-
-  fill_solid(leds, num_leds, c1);
-  FastLED.show();
-  FastLED.delay(frame_delay_ms);
-
-  for (i = center - 1; i >= 0; i -= segment_size) {
-    for (j = 0; j < num_leds; j++) {
-      leds[j] = (abs(center - j) <= i) ? c1 : c2;
-    }
-    FastLED.show();
-    FastLED.delay(frame_delay_ms);
-  }
-
-  fill_solid(leds, num_leds, c2);
-  FastLED.show();
-  FastLED.delay(frame_delay_ms);
-}
-
-void GenericFillAnimation(CRGB *leds, int num_leds, bool center_fill) {
-  CRGB c1, c2;
-  fillRandomContrastingColors(c1, c2);
-
-  // Selecting the number of segments to fill at once.  This effectively
-  // changes the speed of the fill.  The framerate is too low to do one at
-  // a time.
-  int segment_size = 2;
-
-  int frame_delay_ms = random(kMinFrameDelayMS, kMaxFrameDelayMS);
-
-  // Select a random number of animation loops to complete
-  int num_fills = random(kMinFills, kMaxFills);
-  
-  for (int i = 0; i < num_fills; i++) {
-    if (center_fill) {
-      // Note: We use a 1/2 segment size for Centerfill since it fills in
-      // two directions at once, resulting in the animation completing 2x
-      // faster that expected.  By halving it here we counteract that effect.
-      CenterFillAnimation_Aux(leds, num_leds,
-                              segment_size / 2, c1, c2, frame_delay_ms);
-    } else {
-      FillAnimation_Aux(leds, num_leds,
-                        segment_size, c1, c2, frame_delay_ms);
-    }
-  }
-}
-
-void FillAnimation(CRGB *leds, int num_leds) {
-  GenericFillAnimation(leds, num_leds, false);
-}
-
-void CenterFillAnimation(CRGB *leds, int num_leds) {
-  GenericFillAnimation(leds, num_leds, true);
-}
+  private:
+    CRGB c1_, c2_;
+    int frame_;
+};
 
 };
 
-#endif // FILL_H
+#endif  // FILL_H

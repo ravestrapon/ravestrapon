@@ -1,8 +1,7 @@
 #ifndef STRIPES_H
 #define STRIPES_H
 
-#include <FastLED.h>
-#include "util.h"
+#include "animation.h"
 
 namespace Stripes {
 
@@ -15,28 +14,35 @@ constexpr int kMaxSweeps = 10;
 constexpr int kMinSpeed = 2;
 constexpr int kMaxSpeed = 4;
 
-constexpr int kFrameDelayMS = 50;
+class StripesAnimation : public Animation {
+  public:
+    StripesAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
+      fillRandomContrastingColors(c1_, c2_);
+      num_stripes_ = random(kMinNumStripes, kMaxNumStripes);
+      stripe_size_ = num_leds / num_stripes_;
+      speed_ = random(kMinSpeed, kMaxSpeed);
+      direction_ = randomDirection();
 
-void StripesAnimation(CRGB *leds, int num_leds) {
-  CRGB c1, c2;
-  fillRandomContrastingColors(c1, c2);
+      offset_ = 0;
+    };
 
-  int num_stripes = random(kMinNumStripes, kMaxNumStripes);
-  int stripe_size = num_leds / num_stripes;
-  int num_sweeps = random(kMinSweeps, kMaxSweeps);
-  int dir = random(0, 2) ? 1 : -1;
-  int speed = random(kMinSpeed, kMaxSpeed);
+    void nextFrame() {
+      offset_ += direction_ * speed_;
+      for(int i = 0; i < num_leds_; i++) {
+        leds_[i] = (((i + offset_) / stripe_size_) % 2 == 0) ? c1_ : c2_;
+      }
+    };
 
-  for (int offset = 0;
-       offset < num_leds * num_sweeps && offset > -num_leds * num_sweeps;
-       offset += dir * speed) {
-    for(int j = 0; j < num_leds; j++) {
-      leds[j] = (((j + offset) / stripe_size) % 2 == 0) ? c1 : c2;
-    }
-    FastLED.show();
-    FastLED.delay(kFrameDelayMS);
-  }
-}
+  private:
+    CRGB c1_, c2_;
+    int num_stripes_;
+    int stripe_size_;
+    int direction_;
+    int speed_;
+
+    int offset_; 
+};
+
 
 };
 
