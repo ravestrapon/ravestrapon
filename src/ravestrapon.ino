@@ -6,6 +6,7 @@
 
 #include "addons/fuelgauge.h"
 
+#include "animations/blockify.h"
 #include "animations/stripes.h"
 #include "animations/static.h"
 #include "animations/fill.h"
@@ -112,7 +113,7 @@ void setup() {
 // by building up an enum full of their names and a generator function
 // that returns a generic Animation* give the type of animation.
 // When adding a new animation, this is where you do the book-keeping.
-enum AnimationType {STATIC, FILL, CENTERFILL, STRIPES, NUM_ANIMATIONS};
+enum AnimationType {BLOCKIFY, STATIC, FILL, CENTERFILL, STRIPES, NUM_ANIMATIONS};
 Animation* buildNewAnimation(AnimationType type);
 Animation* buildNewAnimation(AnimationType type) {
   switch (type) {
@@ -124,6 +125,8 @@ Animation* buildNewAnimation(AnimationType type) {
       return new Stripes::StripesAnimation(leds, NUM_LEDS);
     case AnimationType::STATIC:
       return new Static::StaticAnimation(leds, NUM_LEDS);
+    case AnimationType::BLOCKIFY:
+      return new Blockify::BlockifyAnimation(leds, NUM_LEDS);
     default:
       return NULL;
   }
@@ -132,7 +135,7 @@ Animation* buildNewAnimation(AnimationType type) {
 void loop() {
   Animation* anim;
 
-  for (int type = 0; type < NUM_ANIMATIONS; type++) {
+  for (int type = 0; type < 2 /* NUM_ANIMATIONS */; type++) {
     anim = buildNewAnimation(static_cast<AnimationType>(type));
     for (int i = 0; i < 100; i++) {
       anim->nextFrame();

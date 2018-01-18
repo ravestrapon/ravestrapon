@@ -18,8 +18,8 @@ class StripesAnimation : public Animation {
   public:
     StripesAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
       fillRandomContrastingColors(c1_, c2_);
-      num_stripes_ = random(kMinNumStripes, kMaxNumStripes);
-      stripe_size_ = num_leds / num_stripes_;
+      int num_stripes = random(kMinNumStripes, kMaxNumStripes);
+      stripe_size_ = num_leds_ / num_stripes;
       speed_ = random(kMinSpeed, kMaxSpeed);
       direction_ = randomDirection();
 
@@ -35,7 +35,6 @@ class StripesAnimation : public Animation {
 
   private:
     CRGB c1_, c2_;
-    int num_stripes_;
     int stripe_size_;
     int direction_;
     int speed_;
