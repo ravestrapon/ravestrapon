@@ -22,6 +22,7 @@ class DropAnimation : public Animation {
       block_width_ = random(kMinBlockWidth, kMaxBlockWidth);
       fill_level_ = 0;
       dropping_block_position_ = 0;
+      pause_timer_ = 0;
     }
 
     void nextFrame() {
@@ -36,7 +37,9 @@ class DropAnimation : public Animation {
         leds_[i] = (i > num_leds_ - fill_level_) ? c1_ : c2_;
       }
       for (int i = 0; i < block_width_; i++) {
-        leds_[dropping_block_position_ + i] = c1_;
+        if (dropping_block_position_ + i >= 0) {
+          leds_[dropping_block_position_ + i] = c1_;
+        }
       }
 
       // If the whole thing is "full" swap the colors and reset.
