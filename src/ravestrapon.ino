@@ -40,7 +40,6 @@ CRGB leds[NUM_LEDS];
 int brightnesses[] = {7, 20, 35, 60, 100};
 int num_brightnesses = sizeof(brightnesses) / sizeof(brightnesses[0]);
 int brightness = num_brightnesses / 2;
-int last_button_position = false;
 
 
 static unsigned long last_brightness_press_time = 0;
@@ -146,10 +145,14 @@ Animation* buildNewAnimation(AnimationType type) {
 }
 
 void loop() {
-  Animation* anim;
+  Animation* anim = NULL;
 
   for (int type = 0; type < NUM_ANIMATIONS; type++) {
+    if (anim) {
+      delete anim;
+    }
     anim = buildNewAnimation(static_cast<AnimationType>(type));
+
     for (int i = 0; i < 300; i++) {
       anim->nextFrame();
       FastLED.show();
