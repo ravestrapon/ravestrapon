@@ -7,6 +7,7 @@
 #include "addons/fuelgauge.h"
 
 #include "animations/stripes.h"
+#include "animations/static.h"
 #include "animations/fill.h"
 #include "animations/centerfill.h"
 
@@ -107,25 +108,36 @@ void setup() {
 }
 
 
-Animation* buildNewAnimation(int type) {
-  if (type == 0) {
-    return new Fill::FillAnimation(leds, NUM_LEDS);
-  } else if (type == 1) {
-    return new CenterFill::CenterFillAnimation(leds, NUM_LEDS);
-  } else {
-    return new Stripes::StripesAnimation(leds, NUM_LEDS);
+// Here we define the list of animations that the controller can play
+// by building up an enum full of their names and a generator function
+// that returns a generic Animation* give the type of animation.
+// When adding a new animation, this is where you do the book-keeping.
+enum AnimationType {STATIC, FILL, CENTERFILL, STRIPES, NUM_ANIMATIONS};
+Animation* buildNewAnimation(AnimationType type);
+Animation* buildNewAnimation(AnimationType type) {
+  switch (type) {
+    case AnimationType::FILL:
+      return new Fill::FillAnimation(leds, NUM_LEDS);
+    case AnimationType::CENTERFILL:
+      return new CenterFill::CenterFillAnimation(leds, NUM_LEDS);
+    case AnimationType::STRIPES:
+      return new Stripes::StripesAnimation(leds, NUM_LEDS);
+    case AnimationType::STATIC:
+      return new Static::StaticAnimation(leds, NUM_LEDS);
+    default:
+      return NULL;
   }
 }
 
 void loop() {
   Animation* anim;
 
-  for (int animation_type = 0; animation_type < 3; animation_type++) {
-    anim = buildNewAnimation(animation_type);
+  for (int type = 0; type < NUM_ANIMATIONS; type++) {
+    anim = buildNewAnimation(static_cast<AnimationType>(type));
     for (int i = 0; i < 100; i++) {
       anim->nextFrame();
       FastLED.show();
-      FastLED.delay(50);
+      FastLED.delay(20);
     }
   }
 }
