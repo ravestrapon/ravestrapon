@@ -11,8 +11,8 @@ constexpr int kMaxNumStripes = 5;
 constexpr int kMinSweeps = 5;
 constexpr int kMaxSweeps = 10;
 
-constexpr int kMinSpeed = 2;
-constexpr int kMaxSpeed = 4;
+constexpr int kMinSpeed = 1;
+constexpr int kMaxSpeed = 2;
 
 class StripesAnimation : public Animation {
   public:
@@ -41,7 +41,6 @@ class StripesAnimation : public Animation {
 
     int offset_; 
 };
-
 
 };
 

@@ -8,6 +8,7 @@
 
 #include "animations/blockify.h"
 #include "animations/centerfill.h"
+#include "animations/drop.h"
 #include "animations/fill.h"
 #include "animations/pulse.h"
 #include "animations/rainbow.h"
@@ -116,8 +117,8 @@ void setup() {
 // by building up an enum full of their names and a generator function
 // that returns a generic Animation* give the type of animation.
 // When adding a new animation, this is where you do the book-keeping.
-enum AnimationType {TRACER, RAINBOW, PULSE, BLOCKIFY, STATIC, FILL,
-                    CENTERFILL, STRIPES, NUM_ANIMATIONS};
+enum AnimationType {DROP, STRIPES, TRACER, BLOCKIFY, RAINBOW, CENTERFILL, PULSE,
+                    STATIC, FILL, NUM_ANIMATIONS};
 Animation* buildNewAnimation(AnimationType type);
 Animation* buildNewAnimation(AnimationType type) {
   switch (type) {
@@ -137,6 +138,8 @@ Animation* buildNewAnimation(AnimationType type) {
       return new Rainbow::RainbowAnimation(leds, NUM_LEDS);
     case AnimationType::TRACER:
       return new Tracer::TracerAnimation(leds, NUM_LEDS);
+    case AnimationType::DROP:
+      return new Drop::DropAnimation(leds, NUM_LEDS);
     default:
       return NULL;
   }
@@ -145,9 +148,9 @@ Animation* buildNewAnimation(AnimationType type) {
 void loop() {
   Animation* anim;
 
-  for (int type = 0; type < 2 /* NUM_ANIMATIONS */; type++) {
+  for (int type = 0; type < NUM_ANIMATIONS; type++) {
     anim = buildNewAnimation(static_cast<AnimationType>(type));
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 300; i++) {
       anim->nextFrame();
       FastLED.show();
       FastLED.delay(20);
