@@ -17,7 +17,7 @@ constexpr int kMaxSpeed = 10;
 class StaticAnimation : public Animation {
   public:
     StaticAnimation(CRGB* leds, int num_leds, int num_frames) :
-                    Animation(leds, num_leds, num_frames) {
+          Animation(leds, num_leds, num_frames) {
       int num_segments = random(kMinSegments, kMaxSegments);
       segment_length_ = num_leds_ / num_segments;
       speed_ = random(kMinSpeed, kMaxSpeed);

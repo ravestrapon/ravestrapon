@@ -17,7 +17,7 @@ constexpr int kNumPauseFrames = 10;
 class DropAnimation : public Animation {
   public:
     DropAnimation(CRGB* leds, int num_leds, int num_frames) :
-                  Animation(leds, num_leds, num_frames) {
+        Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       speed_ = random(kMinSpeed, kMaxSpeed);
       block_width_ = random(kMinBlockWidth, kMaxBlockWidth);

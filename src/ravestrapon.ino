@@ -4,7 +4,7 @@
 
 #include <FastLED.h>
 
-#include "animations/fuelgauge.h"
+//#include "animations/fuelgauge.h"
 
 #include "animations/blockify.h"
 #include "animations/centerfill.h"

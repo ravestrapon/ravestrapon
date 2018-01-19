@@ -14,7 +14,7 @@ constexpr int kMaxSpeed = 4;
 class TracerAnimation : public Animation {
   public:
     TracerAnimation(CRGB* leds, int num_leds, int num_frames) :
-                    Animation(leds, num_leds, num_frames) {
+          Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       tracer_position_ = random(num_leds_);
       tracer_width_ = random(kMinTracerWidth, kMaxTracerWidth);

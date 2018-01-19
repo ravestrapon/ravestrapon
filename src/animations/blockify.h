@@ -17,7 +17,7 @@ constexpr int kMaxSpeed = 10;
 class BlockifyAnimation : public Animation {
   public:
     BlockifyAnimation(CRGB* leds, int num_leds, int num_frames) :
-                      Animation(leds, num_leds, num_frames) {
+            Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       int num_blocks = random(kMinBlocks, kMaxBlocks);
       block_size_ = num_leds_ / num_blocks;

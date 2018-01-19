@@ -11,7 +11,7 @@ constexpr int kMaxSpeed = 4;
 class CenterFillAnimation : public Animation {
   public:
     CenterFillAnimation(CRGB* leds, int num_leds, int num_frames) :
-                        Animation(leds, num_leds, num_frames) {
+              Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       int direction = randomDirection();
       phase_shift_ = (direction == -1) ? 0 : num_leds / 2;

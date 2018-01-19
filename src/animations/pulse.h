@@ -11,7 +11,7 @@ constexpr int kMaxSpeed = 15;
 class PulseAnimation : public Animation {
   public:
     PulseAnimation(CRGB* leds, int num_leds, int num_frames) :
-                   Animation(leds, num_leds, num_frames) {
+         Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       speed_ = random(kMinSpeed, kMaxSpeed);
       angle_ = random(360);

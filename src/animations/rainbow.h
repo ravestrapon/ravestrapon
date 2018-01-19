@@ -15,7 +15,7 @@ constexpr int kMaxSpeed = 12;
 class RainbowAnimation : public Animation {
   public:
     RainbowAnimation(CRGB* leds, int num_leds, int num_frames) :
-                     Animation(leds, num_leds, num_frames) {
+           Animation(leds, num_leds, num_frames) {
       offset_ = random(255);
       speed_ = random(kMinSpeed, kMaxSpeed) * randomDirection();
       // This value sets how much the hue steps ahead for each pixel, effectively
