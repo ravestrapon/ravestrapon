@@ -10,14 +10,14 @@ constexpr int kMaxSpeed = 15;
 
 class PulseAnimation : public Animation {
   public:
-    PulseAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
+    PulseAnimation(CRGB* leds, int num_leds, int num_frames) :
+                   Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       speed_ = random(kMinSpeed, kMaxSpeed);
       angle_ = random(360);
     }
 
-  
-    void nextFrame() {
+    void generateNextFrame() {
       double mixing_percent = abs(sin(radians(angle_)));
       CRGB mixed = blend(c1_, c2_, static_cast<int>(mixing_percent * 255.0));
       fill_solid(leds_, num_leds_, mixed);

@@ -16,13 +16,14 @@ constexpr int kMaxSpeed = 10;
 
 class StaticAnimation : public Animation {
   public:
-    StaticAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
+    StaticAnimation(CRGB* leds, int num_leds, int num_frames) :
+                    Animation(leds, num_leds, num_frames) {
       int num_segments = random(kMinSegments, kMaxSegments);
       segment_length_ = num_leds_ / num_segments;
       speed_ = random(kMinSpeed, kMaxSpeed);
     }
 
-    void nextFrame() {
+    void generateNextFrame() {
       if (frame_ % speed_ == 0) {
         CRGB c;
         for (int i = 0; i < num_leds_; i++) {
@@ -32,12 +33,10 @@ class StaticAnimation : public Animation {
           leds_[i] = c; 
         }
       }
- 
-      frame_++;
     }
 
   private:
-    int segment_length_, speed_, frame_;
+    int segment_length_, speed_;
 };
 
 };

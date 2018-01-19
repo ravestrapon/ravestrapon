@@ -4,7 +4,7 @@
 
 #include <FastLED.h>
 
-#include "addons/fuelgauge.h"
+#include "animations/fuelgauge.h"
 
 #include "animations/blockify.h"
 #include "animations/centerfill.h"
@@ -15,6 +15,18 @@
 #include "animations/static.h"
 #include "animations/stripes.h"
 #include "animations/tracer.h"
+
+// Here we define the list of animations that the controller can play
+// by building up an enum full of their names and a generator function
+// that returns a generic Animation* give the type of animation.
+// When adding a new animation, this is where you do the book-keeping.
+enum AnimationType {DROP, STRIPES, TRACER, BLOCKIFY, RAINBOW, CENTERFILL, PULSE,
+                    FILL, STATIC, NUM_ANIMATION_TYPES};
+Animation* buildNewAnimation(AnimationType type);
+Animation* current_animation;
+Animation* standby_animation;
+
+#define NUM_FRAMES 300
 
 #define UNUSED_ANALOG_INPUT 1
 #define POWER_ON_DELAY_MS 1000
@@ -58,17 +70,13 @@ ISR(INT0_vect) {
 }
 
 static unsigned long last_fuel_gauge_press_time = 0;
-bool should_read_fuel_gauge = false;
+volatile bool should_read_fuel_gauge = false;
 ISR(INT1_vect) {
   // Handing a button press of the fuel gauge status button.
   unsigned long now = millis();
   if (now - last_fuel_gauge_press_time > BOUNCE_TIME_MS &&
      !digitalRead(FUEL_GAUGE_BTN_PIN)) {
     should_read_fuel_gauge = true;
-
-    // Temp -- update the usb power status on the LED when this button is pressed
-    bool is_usb_connected = digitalRead(USB_POWER_DETECTION_PIN);
-    digitalWrite(STATUS_LED2_PIN, is_usb_connected);
   }
   last_fuel_gauge_press_time = now;
 }
@@ -109,54 +117,67 @@ void setup() {
   delay(POWER_ON_DELAY_MS);
   FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalSMD5050);
   FastLED.setBrightness(brightnesses[brightness]);
+
+  // Set up the initial Animation to run and other animation-bookkeeping
+  current_animation = buildNewAnimation(static_cast<AnimationType>(0));
+  standby_animation = NULL;
 }
 
+int next_animation_type = 0;
+Animation* SwitchToNextAnimation() {
+  // First, avoid memory leaks by deleting any animation that's ending
+  if (current_animation) {
+    delete current_animation;
+  }
 
-// Here we define the list of animations that the controller can play
-// by building up an enum full of their names and a generator function
-// that returns a generic Animation* give the type of animation.
-// When adding a new animation, this is where you do the book-keeping.
-enum AnimationType {DROP, STRIPES, TRACER, BLOCKIFY, RAINBOW, CENTERFILL, PULSE,
-                    STATIC, FILL, NUM_ANIMATIONS};
-Animation* buildNewAnimation(AnimationType type);
+  // If there is a standby animation waiting to restart, use it
+  if (standby_animation) {
+    current_animation = standby_animation;
+    standby_animation = NULL;
+  } else {
+  // Otherwise create a new animation object of the next type.
+    current_animation = buildNewAnimation(
+                            static_cast<AnimationType>(next_animation_type));
+    next_animation_type = (next_animation_type + 1) % NUM_ANIMATION_TYPES;
+  }
+}
+
 Animation* buildNewAnimation(AnimationType type) {
   switch (type) {
     case AnimationType::FILL:
-      return new Fill::FillAnimation(leds, NUM_LEDS);
+      return new Fill::FillAnimation(leds, NUM_LEDS, NUM_FRAMES);
     case AnimationType::CENTERFILL:
-      return new CenterFill::CenterFillAnimation(leds, NUM_LEDS);
+      return new CenterFill::CenterFillAnimation(leds, NUM_LEDS, NUM_FRAMES);
     case AnimationType::STRIPES:
-      return new Stripes::StripesAnimation(leds, NUM_LEDS);
+      return new Stripes::StripesAnimation(leds, NUM_LEDS, NUM_FRAMES);
     case AnimationType::STATIC:
-      return new Static::StaticAnimation(leds, NUM_LEDS);
+      return new Static::StaticAnimation(leds, NUM_LEDS, NUM_FRAMES);
     case AnimationType::BLOCKIFY:
-      return new Blockify::BlockifyAnimation(leds, NUM_LEDS);
+      return new Blockify::BlockifyAnimation(leds, NUM_LEDS, NUM_FRAMES);
     case AnimationType::PULSE:
-      return new Pulse::PulseAnimation(leds, NUM_LEDS);
+      return new Pulse::PulseAnimation(leds, NUM_LEDS, NUM_FRAMES);
     case AnimationType::RAINBOW:
-      return new Rainbow::RainbowAnimation(leds, NUM_LEDS);
+      return new Rainbow::RainbowAnimation(leds, NUM_LEDS, NUM_FRAMES);
     case AnimationType::TRACER:
-      return new Tracer::TracerAnimation(leds, NUM_LEDS);
+      return new Tracer::TracerAnimation(leds, NUM_LEDS, NUM_FRAMES);
     case AnimationType::DROP:
-      return new Drop::DropAnimation(leds, NUM_LEDS);
+      return new Drop::DropAnimation(leds, NUM_LEDS, NUM_FRAMES);
     default:
       return NULL;
   }
 }
 
 void loop() {
-  Animation* anim = NULL;
+  SwitchToNextAnimation();
 
-  for (int type = 0; type < NUM_ANIMATIONS; type++) {
-    if (anim) {
-      delete anim;
-    }
-    anim = buildNewAnimation(static_cast<AnimationType>(type));
+  while(current_animation->nextFrame()) {
+    FastLED.show();
+    FastLED.delay(20);
 
-    for (int i = 0; i < 300; i++) {
-      anim->nextFrame();
-      FastLED.show();
-      FastLED.delay(20);
+    if (should_read_fuel_gauge) {
+      standby_animation = current_animation;
+      current_animation = new Static::StaticAnimation(leds, NUM_LEDS, NUM_FRAMES / 10);
+      should_read_fuel_gauge = false;
     }
   }
 }
@@ -169,3 +190,7 @@ void loop() {
 //  digitalWrite(STATUS_LED2_PIN, LOW);
 //  should_read_fuel_gauge = false;
 //}
+
+// Temp -- update the usb power status on the LED when this button is pressed
+// bool is_usb_connected = digitalRead(USB_POWER_DETECTION_PIN);
+// digitalWrite(STATUS_LED2_PIN, is_usb_connected);

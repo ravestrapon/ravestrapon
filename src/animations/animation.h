@@ -5,8 +5,17 @@
 
 class Animation {
   public:
-    Animation(CRGB* leds, int num_leds) : leds_(leds), num_leds_(num_leds) {};
-    virtual void nextFrame() = 0;
+    Animation(CRGB* leds, int num_leds, int num_frames)
+             : leds_(leds), num_leds_(num_leds),
+               num_frames_(num_frames), frame_(0) {};
+
+    bool nextFrame() {
+      generateNextFrame();
+      frame_++;
+      return (frame_ < num_frames_);
+    };
+
+    virtual void generateNextFrame() = 0;
 
   protected:
 
@@ -28,7 +37,7 @@ class Animation {
     }
 
     CRGB* leds_;
-    int num_leds_;
+    int num_leds_, num_frames_, frame_;
 };
 
 #endif  // ANIMATION_H

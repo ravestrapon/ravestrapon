@@ -16,15 +16,15 @@ constexpr int kMaxSpeed = 10;
 
 class BlockifyAnimation : public Animation {
   public:
-    BlockifyAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
+    BlockifyAnimation(CRGB* leds, int num_leds, int num_frames) :
+                      Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       int num_blocks = random(kMinBlocks, kMaxBlocks);
       block_size_ = num_leds_ / num_blocks;
       speed_ = random(kMinSpeed, kMaxSpeed);
-      frame_ = 0;
     }
 
-    void nextFrame() {
+    void generateNextFrame() {
       // If it's time to redraw, swap the colors and redraw
       if (frame_ % speed_ == 0) {
         CRGB c_temp = c1_;
@@ -35,12 +35,11 @@ class BlockifyAnimation : public Animation {
           leds_[i] = ((i / block_size_) % 2) ? c1_ : c2_;
         }
       }
-      frame_++;
     }
 
   private:
     CRGB c1_, c2_;
-    int frame_, speed_, block_size_;
+    int speed_, block_size_;
 };
 
 };

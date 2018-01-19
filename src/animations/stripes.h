@@ -16,7 +16,8 @@ constexpr int kMaxSpeed = 2;
 
 class StripesAnimation : public Animation {
   public:
-    StripesAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
+    StripesAnimation(CRGB* leds, int num_leds, int num_frames) :
+           Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       int num_stripes = random(kMinNumStripes, kMaxNumStripes);
       stripe_size_ = num_leds_ / num_stripes;
@@ -26,7 +27,7 @@ class StripesAnimation : public Animation {
       offset_ = 0;
     };
 
-    void nextFrame() {
+    void generateNextFrame() {
       offset_ += direction_ * speed_;
       for(int i = 0; i < num_leds_; i++) {
         leds_[i] = (((i + offset_) / stripe_size_) % 2 == 0) ? c1_ : c2_;

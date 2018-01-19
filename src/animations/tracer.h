@@ -13,14 +13,15 @@ constexpr int kMaxSpeed = 4;
 
 class TracerAnimation : public Animation {
   public:
-    TracerAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
+    TracerAnimation(CRGB* leds, int num_leds, int num_frames) :
+                    Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       tracer_position_ = random(num_leds_);
       tracer_width_ = random(kMinTracerWidth, kMaxTracerWidth);
       speed_ = random(kMinSpeed, kMaxSpeed) * randomDirection();
     }
 
-    void nextFrame() {
+    void generateNextFrame() {
       // Draw the current frame.
       for (int i = 0; i < num_leds_; i++) {
         leds_[i] = (abs(tracer_position_ - i) < tracer_width_) ? c1_ : c2_;

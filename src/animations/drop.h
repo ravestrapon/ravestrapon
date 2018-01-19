@@ -16,7 +16,8 @@ constexpr int kNumPauseFrames = 10;
 
 class DropAnimation : public Animation {
   public:
-    DropAnimation(CRGB* leds, int num_leds) : Animation(leds, num_leds) {
+    DropAnimation(CRGB* leds, int num_leds, int num_frames) :
+                  Animation(leds, num_leds, num_frames) {
       fillRandomContrastingColors(c1_, c2_);
       speed_ = random(kMinSpeed, kMaxSpeed);
       block_width_ = random(kMinBlockWidth, kMaxBlockWidth);
@@ -25,7 +26,7 @@ class DropAnimation : public Animation {
       pause_timer_ = 0;
     }
 
-    void nextFrame() {
+    void generateNextFrame() {
       // If a pause timer has been set, decrement it and skip this frame.
       if (pause_timer_ > 0) {
         pause_timer_--;
