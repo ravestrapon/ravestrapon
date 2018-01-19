@@ -190,7 +190,15 @@ void loop() {
     // If the user has pressed the fuel gauge button, we should make a reading and then
     // push a fuel gauge animation into the current position.
     if (should_read_fuel_gauge) {
-      standby_animation = current_animation;
+      // If this is a regular animation, store it's state in standby.  If there
+      // is already something on standby, don't clobber it and just drop the
+      // current animation entirely since it was an interrupting animation also.
+      if (!standby_animation) {
+        standby_animation = current_animation;
+      } else {
+        delete current_animation;
+      }
+      // Build a new animation to show how much fuel is left in the tank.
       current_animation = FuelGauge::buildFuelGaugeAnimation(FUEL_GAUGE_ADC_PIN, leds,
                                                              NUM_LEDS);
       should_read_fuel_gauge = false;
