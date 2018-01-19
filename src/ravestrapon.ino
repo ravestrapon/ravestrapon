@@ -4,7 +4,7 @@
 
 #include <FastLED.h>
 
-//#include "animations/fuelgauge.h"
+#include "animations/fuelgauge.h"
 
 #include "animations/blockify.h"
 #include "animations/centerfill.h"
@@ -176,7 +176,8 @@ void loop() {
 
     if (should_read_fuel_gauge) {
       standby_animation = current_animation;
-      current_animation = new Static::StaticAnimation(leds, NUM_LEDS, NUM_FRAMES / 10);
+      current_animation = FuelGauge::buildFuelGaugeAnimation(FUEL_GAUGE_ADC_PIN, leds,
+                                                             NUM_LEDS);
       should_read_fuel_gauge = false;
     }
   }
