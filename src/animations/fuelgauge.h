@@ -5,26 +5,33 @@
 
 namespace FuelGauge {
 
-constexpr int kNumFrames = 30;
+constexpr int kNumFrames = 100;
 constexpr int kNumADCReadings = 100;
 constexpr float kMinV = 2.5;
 constexpr float kMaxV = 4.2;
+
+constexpr int kSpeed = 5;
 
 class FuelGaugeAnimation : public Animation {
   public:
     FuelGaugeAnimation(CRGB* leds, int num_leds, float percent_full) :
              Animation(leds, num_leds, kNumFrames),
-             percent_full_(percent_full) {};
+             percent_full_(percent_full), angle_(0) {};
 
     void generateNextFrame() {
+      int value = static_cast<int>(abs(sin(radians(angle_))) * 100) + 155;
+
       int num_leds_lit = percent_full_ * num_leds_;
       for (int i = 0; i < num_leds_; i++) {
-        leds_[i] = (i < num_leds_lit) ? CRGB(255, 0, 0) : CRGB (0, 0, 0);
+        leds_[i] = (i < num_leds_lit) ? CHSV(0, 255, value) : CHSV (0, 0, 255);
       }
+
+      angle_ = (angle_ + kSpeed) % 360;
     };
 
   private:
     float percent_full_;
+    int angle_;
 };
 
 Animation* buildFuelGaugeAnimation(int adc_pin, CRGB* leds, int num_leds) {

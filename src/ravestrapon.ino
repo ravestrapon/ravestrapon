@@ -124,9 +124,19 @@ void setup() {
 }
 
 int next_animation_type = 0;
-Animation* SwitchToNextAnimation() {
+void SwitchToNextAnimation() {
   // First, avoid memory leaks by deleting any animation that's ending
   if (current_animation) {
+    // Never kill off an animation while the fuel gauge button is held down.
+    // This is because presumably the animation that is playing is the fuel
+    // gauge, and since the user is still holding down the button they most
+    // most likely want it to keep displaying.  As soon as they release the
+    // button, this check will stop preventing the animation from moving on.
+    if (!digitalRead(FUEL_GAUGE_BTN_PIN)) {
+      return;
+    }
+
+    // Otherwise, we'll be stopping the animation and no longer need it.
     delete current_animation;
   }
 
@@ -168,12 +178,17 @@ Animation* buildNewAnimation(AnimationType type) {
 }
 
 void loop() {
+  // This call should set up whatever is the right thing to be in current_animation
   SwitchToNextAnimation();
 
-  while(current_animation->nextFrame()) {
+  bool has_more_frames = true;
+  while(has_more_frames) {
+    has_more_frames = current_animation->nextFrame();
     FastLED.show();
     FastLED.delay(20);
 
+    // If the user has pressed the fuel gauge button, we should make a reading and then
+    // push a fuel gauge animation into the current position.
     if (should_read_fuel_gauge) {
       standby_animation = current_animation;
       current_animation = FuelGauge::buildFuelGaugeAnimation(FUEL_GAUGE_ADC_PIN, leds,
@@ -183,14 +198,6 @@ void loop() {
   }
 }
 
-
-// Do the fuel gauge check
-//if (should_read_fuel_gauge) {
-//  digitalWrite(STATUS_LED2_PIN, HIGH);
-//  displayFuelGauge(FUEL_GAUGE_ADC_PIN, leds, NUM_LEDS);
-//  digitalWrite(STATUS_LED2_PIN, LOW);
-//  should_read_fuel_gauge = false;
-//}
 
 // Temp -- update the usb power status on the LED when this button is pressed
 // bool is_usb_connected = digitalRead(USB_POWER_DETECTION_PIN);
