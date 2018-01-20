@@ -5,17 +5,20 @@
 
 namespace FuelGauge {
 
-constexpr int kNumFrames = 100;
+constexpr int kNumFuelGaugeFrames = 100;
+constexpr int kPulseSpeed = 5;
 constexpr int kNumADCReadings = 100;
 constexpr float kMinV = 2.5;
 constexpr float kMaxV = 4.2;
 
-constexpr int kSpeed = 5;
+constexpr int kNumCurrentlyChargingFrames = 300;
+constexpr int kFillSpeed = 3;
+constexpr int kBufferSize = 2;
 
 class FuelGaugeAnimation : public Animation {
   public:
     FuelGaugeAnimation(CRGB* leds, int num_leds, float percent_full) :
-             Animation(leds, num_leds, kNumFrames),
+             Animation(leds, num_leds, kNumFuelGaugeFrames),
              percent_full_(percent_full), angle_(0) {};
 
     void generateNextFrame() {
@@ -26,7 +29,7 @@ class FuelGaugeAnimation : public Animation {
         leds_[i] = (i < num_leds_lit) ? CHSV(0, 255, value) : CHSV (0, 0, 255);
       }
 
-      angle_ = (angle_ + kSpeed) % 360;
+      angle_ = (angle_ + kPulseSpeed) % 360;
     };
 
   private:
@@ -34,7 +37,37 @@ class FuelGaugeAnimation : public Animation {
     int angle_;
 };
 
-Animation* buildFuelGaugeAnimation(int adc_pin, CRGB* leds, int num_leds) {
+class CurrentlyChargingAnimation : public Animation {
+  public:
+    CurrentlyChargingAnimation(CRGB* leds, int num_leds) :
+                     Animation(leds, num_leds, kNumCurrentlyChargingFrames),
+                     angle_(0) {};
+
+    void generateNextFrame() {
+      int fill_level = static_cast<int>(abs(sin(radians(angle_))) *
+                                        (num_leds_ + kBufferSize)) - kBufferSize / 2;
+      for (int i = 0; i < num_leds_; i++) {
+        leds_[i] = (i < fill_level) ? CHSV(0, 255, 255) : CHSV(0, 0, 255);
+      }
+      angle_ += kFillSpeed;
+    };
+
+  private:
+    int angle_;
+};
+
+
+Animation* buildFuelGaugeAnimation(int adc_pin, int usb_power_detection_pin,
+                                   CRGB* leds, int num_leds) {
+  // First check if the USB power is plugged in.  We can't really get good
+  // readings if it's plugged into power and currently charging.  If USB
+  // power is plugged in, we just show an animation that indicates that.
+  // TODO: Add an additional sense line to see if the lipo charger is done
+  //       charging or not (the fully-charged status LED on it)
+  if (digitalRead(usb_power_detection_pin)) {
+    return new CurrentlyChargingAnimation(leds, num_leds);
+  }
+
   // Take the average of many readings on the adc for smoothing
   int64_t readings_total = 0;
   for (int i = 0; i < kNumADCReadings; i++) {

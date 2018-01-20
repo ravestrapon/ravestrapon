@@ -226,8 +226,9 @@ void loop() {
         delete current_animation;
       }
       // Build a new animation to show how much fuel is left in the tank.
-      current_animation = FuelGauge::buildFuelGaugeAnimation(kFuelGaugeADCPin, leds,
-                                                             kNumLEDs);
+      current_animation = FuelGauge::buildFuelGaugeAnimation(
+                              kFuelGaugeADCPin, kUsbPowerDetectionPin,
+                              leds, kNumLEDs);
       should_read_fuel_gauge = false;
     }
 
@@ -239,8 +240,3 @@ void loop() {
     }
   }
 }
-
-
-// Temp -- update the usb power status on the LED when this button is pressed
-// bool is_usb_connected = digitalRead(kUsbPowerDetectionPin);
-// digitalWrite(kStatusLED2Pin, is_usb_connected);
