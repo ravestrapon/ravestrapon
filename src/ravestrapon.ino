@@ -60,23 +60,22 @@ constexpr int kNumLEDs = 24;
 CRGB leds[kNumLEDs];
 
 
-// These global values keep track of the "brightness" setting controlled by the
-// onboard button.
-int brightnesses[] = {7, 20, 35, 60, 100};
-int num_brightnesses = sizeof(brightnesses) / sizeof(brightnesses[0]);
-int brightness = num_brightnesses / 2;
 
 // Interrupt handler for the brightness button.
-// This works by debouncing itself in SW and updating the brightness
-// of the LED strip via FastLEDs setBrightness() routine.
+// This works by setting the brightness_setting value with a new value.
+// When the main loop sees that this value is changed, it'll update the
+// brightness of the main LEDs via FastLEDs setBrightness() routine.
+int brightnesses[] = {7, 20, 35, 60, 100};
+int num_brightnesses = sizeof(brightnesses) / sizeof(brightnesses[0]);
+volatile int brightness_setting = num_brightnesses / 2;
+int current_brightness = brightness_setting;
 static unsigned long last_brightness_press_time = 0;
 ISR(INT0_vect) {
   // Handing a button press of the brightness button.
   unsigned long now = millis();
   if (now - last_brightness_press_time > kBtnBounceTimeMS &&
      !digitalRead(kBrightnessBtnPin)) {
-    brightness = (brightness + 1) % num_brightnesses;
-    FastLED.setBrightness(brightnesses[brightness]);
+    brightness_setting = (brightness_setting + 1) % num_brightnesses;
 
     // Toggle the status LED to indicate the click was registered
     digitalWrite(kStatusLED1Pin, !digitalRead(kStatusLED1Pin));
@@ -144,7 +143,7 @@ void setup() {
   // Initialize the main RGB LEDs
   delay(kPowerOnDelayMS);
   FastLED.addLeds<WS2811, kMainLEDPin, GRB>(leds, kNumLEDs).setCorrection(TypicalSMD5050);
-  FastLED.setBrightness(brightnesses[brightness]);
+  FastLED.setBrightness(brightnesses[current_brightness]);
 
   // Set up the initial Animation to run
   current_animation = buildNewAnimation(static_cast<AnimationType>(0));
@@ -230,6 +229,13 @@ void loop() {
       current_animation = FuelGauge::buildFuelGaugeAnimation(kFuelGaugeADCPin, leds,
                                                              kNumLEDs);
       should_read_fuel_gauge = false;
+    }
+
+    // Check to see if we need to service a brightness change.  If so, tell
+    // FastLED to use the new brightness setting.
+    if (brightness_setting != current_brightness) {
+      FastLED.setBrightness(brightnesses[brightness_setting]);
+      current_brightness = brightness_setting;
     }
   }
 }
