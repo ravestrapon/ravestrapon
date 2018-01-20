@@ -113,15 +113,15 @@ void setup() {
   MCUCR &= ~( 1 << ISC01); // Chaginging edge triggers button's interrupt
   MCUCR |= ( 1 << ISC00); // Chaginging edge triggers button's interrupt
   GIFR |= (1 << INTF0);  // Clear any INT0 flags that may be set
-  GICR |= ( 1 << INT0);  // Enable INT2 interrupts now that the setup is done
+  GICR |= ( 1 << INT0);  // Enable INT0 interrupts now that the setup is done
 
   // Fuel Gauge button setup  (External interrupt 1 -- INT1)
   pinMode(kFuelGaugeBtnPin, INPUT_PULLUP);
   GICR &= ~( 1 << INT1); // Disable INT0 during setup
   MCUCR &= ~( 1 << ISC11); // Chaginging edge triggers button's interrupt
   MCUCR |= ( 1 << ISC10); // Chaginging edge triggers button's interrupt
-  GIFR |= (1 << INTF1);  // Clear any INT0 flags that may be set
-  GICR |= ( 1 << INT1);  // Enable INT2 interrupts now that the setup is done
+  GIFR |= (1 << INTF1);  // Clear any INT1 flags that may be set
+  GICR |= ( 1 << INT1);  // Enable INT1 interrupts now that the setup is done
 
   // Setting up the ADC for the fuel gauge.  We want to use the more accurate
   // internal 2.56V ADC reference rather than an exteranl reference which is more
