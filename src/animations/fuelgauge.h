@@ -11,9 +11,9 @@ constexpr int kNumADCReadings = 100;
 constexpr float kMinV = 2.5;
 constexpr float kMaxV = 4.2;
 
-constexpr int kNumCurrentlyChargingFrames = 300;
-constexpr int kFillSpeed = 3;
-constexpr int kBufferSize = 2;
+constexpr int kNumCurrentlyChargingFrames = 220;
+constexpr float kFillSpeed = 0.75;
+constexpr int kFillPauseLength = 15;
 
 class FuelGaugeAnimation : public Animation {
   public:
@@ -26,7 +26,7 @@ class FuelGaugeAnimation : public Animation {
 
       int num_leds_lit = percent_full_ * num_leds_;
       for (int i = 0; i < num_leds_; i++) {
-        leds_[i] = (i < num_leds_lit) ? CHSV(0, 255, value) : CHSV (0, 0, 255);
+        leds_[i] = (i < num_leds_lit) ? CHSV(0, 255, value) : CHSV (0, 0, 128);
       }
 
       angle_ = (angle_ + kPulseSpeed) % 360;
@@ -41,19 +41,21 @@ class CurrentlyChargingAnimation : public Animation {
   public:
     CurrentlyChargingAnimation(CRGB* leds, int num_leds) :
                      Animation(leds, num_leds, kNumCurrentlyChargingFrames),
-                     angle_(0) {};
+                     fill_level_(0.0) {};
 
     void generateNextFrame() {
-      int fill_level = static_cast<int>(abs(sin(radians(angle_))) *
-                                        (num_leds_ + kBufferSize)) - kBufferSize / 2;
       for (int i = 0; i < num_leds_; i++) {
-        leds_[i] = (i < fill_level) ? CHSV(0, 255, 255) : CHSV(0, 0, 255);
+        leds_[i] = (i < static_cast<int>(fill_level_)) ?
+                              CHSV(0, 255, 255) : CHSV(0, 0, 128);
       }
-      angle_ += kFillSpeed;
+      fill_level_ += kFillSpeed;
+      if (static_cast<int>(fill_level_) > (num_leds_ + kFillPauseLength)) {
+        fill_level_ = 0.0;
+      }
     };
 
   private:
-    int angle_;
+    float fill_level_;
 };
 
 
