@@ -1,9 +1,11 @@
 // Definition of interrupt names
 // ISR interrupt service routine
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
 
 #include <FastLED.h>
 
+#include "savedsettings.h"
 #include "animations/fuelgauge.h"
 
 #include "animations/blockify.h"
@@ -29,11 +31,14 @@ Animation* standby_animation;
 // How many frames each animation gets to run for (duration)
 constexpr int kNumFrames = 300;
 
+// How long to delay (in MS) between generating frames
+constexpr int kFrameDelayMS = 20;
+
 // An unused (floating) ADC input that we can use to read for randomness
 constexpr int kUnusedAnalogInput = 1;
 
 // Delay a brief period before really turning on the LEDs for safety
-constexpr int kPowerOnDelayMS = 500;
+constexpr int kPowerOnDelayMS = 100;
 
 // Settings for the buttons on the controller
 constexpr int kBrightnessBtnPin = 10;
@@ -101,10 +106,16 @@ ISR(INT1_vect) {
 
 
 void setup() {
+  // Configure the Watchdog timer to reset everything in the event of a hang.
+  wdt_enable(WDTO_60MS);
+
   // Read from an unused analog input to get a "random" seed for the rng.  This
   // probably doesn't really do much, but it does keep it from *always* starting
   // with the same animation.
   randomSeed(analogRead(kUnusedAnalogInput));
+
+  // Check the EEPROM to see if any setting (such as brightness) have been saved
+  restoreEEPROMSavedSettings();
 
   // Brightness button setup  (External interrupt 0 -- INT0)
   pinMode(kBrightnessBtnPin, INPUT_PULLUP);
@@ -141,13 +152,25 @@ void setup() {
   digitalWrite(kStatusLED2Pin, LOW);
   
   // Initialize the main RGB LEDs
-  delay(kPowerOnDelayMS);
+  // It's recommended to allow a brief power-on delay for the main LED strip,
+  // so here we produce a small batch of mini delays resetting the WDT each
+  // time so we can delay without triggering a reset.
+  int mini_delays_needed = kPowerOnDelayMS / kFrameDelayMS;
+  for (int i = 0; i < mini_delays_needed; i++) {
+    delay(kFrameDelayMS);
+    wdt_reset();
+  }
+  delay(kPowerOnDelayMS - (kFrameDelayMS * mini_delays_needed));
+  wdt_reset();
   FastLED.addLeds<WS2811, kMainLEDPin, GRB>(leds, kNumLEDs).setCorrection(TypicalSMD5050);
   FastLED.setBrightness(brightnesses[current_brightness]);
 
   // Set up the initial Animation to run
   current_animation = buildNewAnimation(static_cast<AnimationType>(0));
   standby_animation = NULL;
+
+  // Reset the watchdog timer
+  wdt_reset();
 }
 
 int next_animation_type = 0;
@@ -210,9 +233,13 @@ void loop() {
 
   bool has_more_frames = true;
   while(has_more_frames) {
+    // Reset the watchdog timer any time a new frame is rendered.  This way if the
+    // system goes too long without generating a new frame, everything resets.
+    wdt_reset();
+
     has_more_frames = current_animation->nextFrame();
     FastLED.show();
-    FastLED.delay(20);
+    FastLED.delay(kFrameDelayMS);
 
     // If the user has pressed the fuel gauge button, we should make a reading and then
     // push a fuel gauge animation into the current position.
@@ -237,6 +264,7 @@ void loop() {
     if (brightness_setting != current_brightness) {
       FastLED.setBrightness(brightnesses[brightness_setting]);
       current_brightness = brightness_setting;
+      saveBrightnessToEEPROM();
     }
   }
 }
